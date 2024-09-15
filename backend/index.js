@@ -2,10 +2,10 @@ require('dotenv').config(); // Cargar variables de entorno
 
 const express = require('express');
 const cors = require('cors');
-const { conexionBDD } = require('./src/configura/conexion');
+const { conexionBDD } = require('./src/config/conexion');
 const Rutas = require('./src/routes/Rutas');
 const cargar = require('./src/routes/cargarRuta');
-const AppEnv = require('./src/configura/appEnv');
+const AppEnv = require('./src/config/appEnv');
 
 const appEnv = new AppEnv();
 

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const FormuData = require('../contro/FormuData'); // La ruta debe coincidir con la ubicación real
+const FormuData = require('../controllers/FormuData'); // La ruta debe coincidir con la ubicación real
 
 // Definir las rutas
 router.get('/', FormuData.getAllFormularios);

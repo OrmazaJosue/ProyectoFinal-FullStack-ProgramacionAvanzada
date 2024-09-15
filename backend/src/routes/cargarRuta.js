@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const solicitanteController = require('../contro/cararData'); // Importa el controlador de solicitantes
+const solicitanteController = require('../controllers/cararData'); // Importa el controlador de solicitantes
 
 // Definir las rutas
 router.get('/', solicitanteController.getAllSolicitantes);
