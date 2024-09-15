@@ -1,9 +1,11 @@
 const { getDB } = require('../config/conexion');
 const { ObjectId } = require('mongodb');
 const Formulario = require('../documentos/formulario'); // Nota: Usar minúsculas para la extensión del archivo
+const generateFormularioExitoEmail = require('../emails/formularioExitoEmail'); // Importar la función del email
+const { sendMail } = require('../config/mailConfig'); // Importar la función para enviar correos
 
 exports.createFormulario = async (req, res) => {
-  const { nombre, apellido, fechaNacimiento, numeroCedula, estadoCivil, coloniaBarrio, ciudad, estadoProvincia, telefono, correoElectronico, documentosAdjuntos, captchaResponse } = req.body;
+  const { nombre, numeroCedula, correoElectronico } = req.body;
 
   const errors = validateFormulario(req.body);
 
@@ -13,15 +15,17 @@ exports.createFormulario = async (req, res) => {
 
   try {
     const db = getDB();
-    const formulario = new Formulario(nombre, apellido, fechaNacimiento, numeroCedula, estadoCivil, coloniaBarrio, ciudad, estadoProvincia, telefono, correoElectronico, documentosAdjuntos, captchaResponse);
-    
+    const formulario = new Formulario(req.body);
+
+    // Enviar correo al crear el formulario
     try {
-      await enviarCorreo(numeroCedula, correoElectronico, 1);
+      const emailHTML = generateFormularioExitoEmail(nombre, numeroCedula); // Generar el HTML del correo
+      await sendMail(correoElectronico, 'Formulario Enviado con Éxito', '', emailHTML); // Enviar el correo con HTML
     } catch (err) {
       console.error('Error al enviar el correo:', err);
       return res.status(500).send('Error al enviar el correo');
     }
-    
+
     await db.collection('formulario').insertOne(formulario);
     res.status(201).json(formulario);
   } catch (err) {
@@ -29,6 +33,7 @@ exports.createFormulario = async (req, res) => {
     res.status(500).send('Server Error');
   }
 };
+
 
 exports.getAllFormularios = async (req, res) => {
   try {
