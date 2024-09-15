@@ -1,18 +1,5 @@
 class Formulario {
-  constructor(
-    nombre,
-    apellido,
-    fechaNacimiento,
-    numeroCedula,
-    estadoCivil,
-    coloniaBarrio,
-    ciudad,
-    estadoProvincia,
-    telefono,
-    correoElectronico,
-    documentosAdjuntos,
-    captchaResponse = null // Valor por defecto de null
-  ) {
+  constructor({ nombre, apellido, fechaNacimiento, numeroCedula, estadoCivil, coloniaBarrio, ciudad, estadoProvincia, telefono, correoElectronico, documentosAdjuntos, captchaResponse }) {
     this.nombre = nombre;
     this.apellido = apellido;
     this.fechaNacimiento = fechaNacimiento;
@@ -28,5 +15,4 @@ class Formulario {
   }
 }
 
-// Exportar la clase para que pueda ser utilizada en otros módulos
 module.exports = Formulario;

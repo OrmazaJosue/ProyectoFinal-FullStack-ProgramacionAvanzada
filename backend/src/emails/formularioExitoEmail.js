@@ -88,9 +88,8 @@ const generateFormularioExitoEmail = (nombreUsuario, cedulaUsuario) => {
             ¡Formulario Enviado con Éxito!
           </div>
           <div class="card-body">
-            <p>Estimado/a ${nombreUsuario},</p>
+            <p>Estimado/a ${nombreUsuario}, con cédula: ${cedulaUsuario}</p>
             <p>Nos complace informarle que su formulario ha sido enviado con éxito. Nuestro equipo revisará su solicitud y le contactará en caso de ser necesario.</p>
-            <p>Cédula: ${cedulaUsuario}</p>
             <hr>
             <p>Atentamente,</p>
             <p>El equipo de Soporte</p>
