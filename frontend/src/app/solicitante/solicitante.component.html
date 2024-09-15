@@ -52,8 +52,12 @@
             <td>{{ solicitante.telefono }}</td>
             <td>{{ solicitante.correoElectronico }}</td>
             <td>{{ solicitante.tipoTerreno }}</td>
-            <td>{{ solicitante.documentosAdjuntos }}</td>
-            <td>{{ solicitante.estado }}</td>
+            <td>
+              <button *ngIf="solicitante.documentosAdjuntos" class="btn btn-primary" (click)="openPDF(solicitante.documentosAdjuntos)">
+                Ver PDF
+              </button>
+            </td>
+                        <td>{{ solicitante.estado }}</td>
             <td>
               <button class="btn btn-success" (click)="cambiarEstado(solicitante.id, 'procesando')">Aprobar</button>
               <button class="btn btn-danger" (click)="cambiarEstado(solicitante.id, 'rechazado')">Rechazar</button>
