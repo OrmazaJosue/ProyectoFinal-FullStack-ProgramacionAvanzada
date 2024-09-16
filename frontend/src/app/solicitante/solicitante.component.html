@@ -33,7 +33,7 @@
             <th>Provincia/Estado</th>
             <th>Teléfono</th>
             <th>Correo electrónico</th>
-            <th>Terreno</th>
+            <!-- <th>Terreno</th> -->
             <th>Archivo adjunto</th>
             <th>Estado</th>
             <th>Acciones</th>
@@ -51,13 +51,23 @@
             <td>{{ solicitante.estadoProvincia }}</td>
             <td>{{ solicitante.telefono }}</td>
             <td>{{ solicitante.correoElectronico }}</td>
-            <td>{{ solicitante.tipoTerreno }}</td>
+            <!-- <td>{{ solicitante.tipoTerreno }}</td> -->
             <td>
-              <button *ngIf="solicitante.documentosAdjuntos" class="btn btn-primary" (click)="openPDF(solicitante.documentosAdjuntos)">
+              <button *ngIf="solicitante.documentosAdjuntos" class="btn btn-primary"
+                (click)="openPDF(solicitante.documentosAdjuntos)">
                 Ver PDF
               </button>
             </td>
-                        <td>{{ solicitante.estado }}</td>
+            <td>
+              <span [ngClass]="{
+                  'estado-registro': true,
+                  'estado-pendiente': solicitante.estadoRegistro === 'pendiente',
+                  'estado-aceptado': solicitante.estadoRegistro === 'aceptado',
+                  'estado-rechazado': solicitante.estadoRegistro === 'rechazado'
+                }">
+                {{ solicitante.estadoRegistro }}
+              </span>
+            </td>
             <td>
               <button class="btn btn-success" (click)="cambiarEstado(solicitante.id, 'procesando')">Aprobar</button>
               <button class="btn btn-danger" (click)="cambiarEstado(solicitante.id, 'rechazado')">Rechazar</button>

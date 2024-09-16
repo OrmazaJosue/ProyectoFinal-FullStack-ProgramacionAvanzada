@@ -1,5 +1,32 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+ /* Estilos para los diferentes estados de registro */
+ .estado-registro {
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-weight: bold;
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  font-size: 14px;
+}
 
+.estado-pendiente {
+  background-color: #ffeb3b; /* Amarillo */
+  color: #795548; /* Color marrón oscuro */
+  border: 1px solid #fbc02d;
+}
+
+.estado-aceptado {
+  background-color: #4caf50; /* Verde */
+  color: white;
+  border: 1px solid #388e3c;
+}
+
+.estado-rechazado {
+  background-color: #f44336; /* Rojo */
+  color: white;
+  border: 1px solid #d32f2f;
+}
 body {
   font-family: Arial, sans-serif;
   /* Fuente consistente */

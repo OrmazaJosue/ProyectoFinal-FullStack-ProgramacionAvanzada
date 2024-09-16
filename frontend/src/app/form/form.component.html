@@ -177,14 +177,17 @@
                   <small><strong class="text-muted"> Documentos Requeridos (adjuntar, copia de cédula y papeleta de
                       votación)</strong></small>
                 </label>
-                <input type="file" (change)="onFileSelected($event)" class="form-control-file" required />
+                <!-- Aceptar solo archivos PDF -->
+                <input type="file" (change)="onFileSelected($event)" class="form-control-file" required accept=".pdf" />
                 <div *ngIf="form.get('documentosAdjuntos')?.invalid && form.get('documentosAdjuntos')?.touched"
                   class="text-danger">
                   <div *ngIf="form.get('documentosAdjuntos')?.errors?.['required']">Se requiere campo.</div>
+                  <div *ngIf="form.get('documentosAdjuntos')?.errors?.['fileType']">Solo se permiten archivos PDF.</div>
                   <div *ngIf="form.get('documentosAdjuntos')?.errors?.['maxSize']">El archivo no debe exceder los 10MB.
                   </div>
                 </div>
               </div>
+
               <button type="submit" class="btn btn-primary col-12">Enviar</button>
             </form>
           </div>
