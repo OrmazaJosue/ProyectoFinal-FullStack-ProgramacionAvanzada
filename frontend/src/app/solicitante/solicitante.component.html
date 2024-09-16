@@ -69,9 +69,14 @@
               </span>
             </td>
             <td>
-              <button class="btn btn-success" (click)="cambiarEstado(solicitante._id, 'aceptado')">Aprobar</button>
-              <button class="btn btn-danger" (click)="rechazarSolicitud(solicitante._id)">Rechazar</button>
+              <button class="btn btn-success"
+                      (click)="cambiarEstado(solicitante._id, 'aceptado')"
+                      [disabled]="solicitante.estadoRegistro === 'aceptado'">Aprobar</button>
+              <button class="btn btn-danger"
+                      (click)="rechazarSolicitud(solicitante._id)"
+                      [disabled]="solicitante.estadoRegistro === 'aceptado'">Rechazar</button>
             </td>
+
           </tr>
         </tbody>
       </table>

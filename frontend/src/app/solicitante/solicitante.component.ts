@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
@@ -9,7 +10,7 @@ import Notiflix from 'notiflix';
 @Component({
   selector: 'app-solicitante',
   standalone: true,
-  imports: [RouterOutlet, FormsModule, CommonModule, RouterLink, RouterLinkActive ],
+  imports: [RouterOutlet, FormsModule, CommonModule, RouterLink, RouterLinkActive, HttpClientModule ],
   templateUrl: './solicitante.component.html',
   styleUrl: './solicitante.component.css'
 })
@@ -37,7 +38,7 @@ export class SolicitanteComponent implements OnInit {
       const response = await axios.get('http://localhost:3001/api/formulario');
       this.solicitantes = response.data; // Asignar los datos recibidos a la propiedad
       Notiflix.Loading.remove(); // Quitar mensaje de carga
-      Notiflix.Notify.success('Enviado correcto');
+      //Notiflix.Notify.success('Enviado correcto');
       console.log(this.solicitantes);
     } catch (error) {
       console.error('Error al obtener los datos', error);

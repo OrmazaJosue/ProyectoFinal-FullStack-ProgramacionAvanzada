@@ -2,107 +2,57 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-
-interface Terreno {
-  id: number;
-  Cedula: string;
-  firstName: string;
-  lastName: string;
-  City: string;
-  Email: string;
-  Document: string;
-  terreno: string[]; // Nuevo campo para los terrenos escogidos
-  status: 'Pendiente' | 'Aprobado' | 'Desaprobado'; // Nuevo campo para el estado
-
-
+interface SolicitudAprobada {
+  _id: string;
+  nombre: string;
+  apellido: string;
+  numeroCedula: string;
+  ciudad: string;
+  correoElectronico: string;
+  documentosAdjuntos: string;
+  estadoRegistro: 'Pendiente' | 'Aprobado' | 'Desaprobado';
 }
 
 @Component({
   selector: 'app-gestion-terrenos',
   standalone: true,
-  imports: [RouterOutlet, FormsModule, CommonModule,  RouterLink],
+  imports: [RouterOutlet, FormsModule, CommonModule, RouterLink, HttpClientModule],
   templateUrl: './gestion-terrenos.component.html',
   styleUrl: './gestion-terrenos.component.css'
 })
-export class GestionTerrenosComponent implements OnInit{
+export class GestionTerrenosComponent implements OnInit {
 
-  subject: string = '';
-  message: string = '';
+  solicitudesAprobadas: SolicitudAprobada[] = []; // Aquí se almacenan las solicitudes obtenidas desde la API
 
-  terreno: Terreno[] = [
-    {
-      id: 1,
-      Cedula: '12345678',
-      firstName: 'Juan',
-      lastName: 'Perez',
-      City: 'Buenos Aires',
-      Email: 'juan.perez@example.com',
-      Document: 'Documento.pdf',
-      terreno: ['Terreno 1', 'Terreno 2'],
-      status: 'Pendiente'
-    },
-    {
-      id: 2,
-      Cedula: '87654321',
-      firstName: 'Maria',
-      lastName: 'Gomez',
-      City: 'Montevideo',
-      Email: 'maria.gomez@example.com',
-      Document: 'Plano.jpg',
-      terreno: ['Terreno 3', 'Terreno 4'],
-      status: 'Pendiente'
-    }
-  ];
-
-  newTerreno: Terreno= {
-    id: 0,
-    Cedula: '',
-    firstName: '',
-    lastName: '',
-    City: '',
-    Email: '',
-    Document: '',
-    terreno: [],
-    status: 'Pendiente',
-  };
-  // Propiedades para el formulario de enviar correo
-  terrenoSeleccionado: Terreno| null = null; // Para almacenar la terrenoa seleccionada
-
-  constructor(private router: Router) {}
+  constructor(private router: Router, private http: HttpClient) {}
 
   ngOnInit(): void {
-    // Lógica de inicialización, si es necesaria
+    this.getSolicitudesAprobadas(); // Llamamos a la función para cargar los datos al iniciar el componente
   }
 
-  isRedirecting: boolean = false; // Bandera para controlar la redirección
+  // Función para obtener los datos desde la API
+  getSolicitudesAprobadas(): void {
+    this.http.get<SolicitudAprobada[]>('http://localhost:3001/api/verificar/solicitudes-aprobadas').subscribe({
+      next: (data) => {
+        this.solicitudesAprobadas = data; // Guardar los datos en la propiedad del componente
+      },
+      error: (err) => {
+        console.error('Error al obtener las solicitudes aprobadas', err);
+      }
+    });
+  }
 
-  approveTerreno(terreno: Terreno) {
-    if (!this.isRedirecting) {
-      this.isRedirecting = true;
-      terreno.status = 'Aprobado';
-      setTimeout(() => {
-        this.router.navigate(['/gmail/aprobado-comprobante']);
-        this.isRedirecting = false; // Reiniciar la bandera después de la redirección
-      }, 1000);
+  // Función para ver el documento adjunto
+  verDocumentoAdjunto(solicitud: SolicitudAprobada) {
+    if (solicitud.documentosAdjuntos) {
+      // Aquí puedes redirigir o abrir el documento adjunto
+      window.open(solicitud.documentosAdjuntos, '_blank');
+    } else {
+      alert('No ha cargado documentos.');
     }
-  }
-
-  dessaproveTerreno(terreno: Terreno) {
-    if (!this.isRedirecting) {
-      this.isRedirecting = true;
-      terreno.status = 'Desaprobado';
-      setTimeout(() => {
-        this.router.navigate(['/gmail/denegado-comprobante']);
-        this.isRedirecting = false; // Reiniciar la bandera después de la redirección
-      }, 1000);
-    }
-  }
-  verDocumentoAdjunto() {
-    // Aquí defines la URL del documento adjunto
-    const url = 'ruta/al/documento-adjunto.png';
-    // Abre una nueva ventana con el documento adjunto
-    window.open(url, '_blank');
   }
 
   goBack() {
