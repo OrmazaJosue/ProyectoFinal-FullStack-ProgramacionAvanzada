@@ -22,6 +22,16 @@ export class SolicitanteComponent implements OnInit {
     this.getFormularioData();
   }
 
+  async rechazarSolicitud(id: string): Promise<void> {
+    try {
+      await axios.delete(`http://localhost:3001/api/formulario/${id}`);
+      this.getFormularioData(); // Actualizar la lista después de eliminar
+    } catch (error) {
+      console.error('Error al eliminar el formulario', error);
+    }
+  }
+
+
   async getFormularioData(): Promise<void> {
     try {
       const response = await axios.get('http://localhost:3001/api/formulario');
@@ -33,18 +43,16 @@ export class SolicitanteComponent implements OnInit {
       console.error('Error al obtener los datos', error);
     }
   }
-  async cambiarEstado(id: number, nuevoEstado: string): Promise<void> {
+  async cambiarEstado(id: string, nuevoEstado: string): Promise<void> {
     try {
-      const response = await axios.put(`http://localhost:3001/api/formulario${id}`, {
-        estado: nuevoEstado
-      });
-      console.log('Estado actualizado', response.data);
-      this.getFormularioData(); // Actualizar la lista de solicitantes
+      await axios.put(`http://localhost:3001/api/formulario/${id}`, { estado: nuevoEstado });
+      this.getFormularioData(); // Actualizar la lista de solicitantes después de cambiar el estado
     } catch (error) {
-      Notiflix.Loading.remove(); // Quitar mensaje de carga
       console.error('Error al actualizar el estado', error);
     }
   }
+
+
   openPDF(base64PDF: string): void {
     // Convertir base64 a Blob
     const byteCharacters = atob(base64PDF);
