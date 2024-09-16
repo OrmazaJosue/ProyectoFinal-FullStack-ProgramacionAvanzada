@@ -15,7 +15,10 @@ exports.createFormulario = async (req, res) => {
 
   try {
     const db = getDB();
-    const formulario = new Formulario(req.body);
+
+    // Crear el formulario con el estado "pendiente"
+    const formularioData = { ...req.body, estadoRegistro: 'pendiente' }; // Asignar estado por defecto
+    const formulario = new Formulario(formularioData); // Crear la instancia del formulario
 
     // Enviar correo al crear el formulario
     try {
@@ -65,13 +68,33 @@ exports.getFormularioById = async (req, res) => {
 
 exports.updateFormulario = async (req, res) => {
   const { id } = req.params;
-  const { nombre, apellido, fechaNacimiento, numeroCedula, estadoCivil, coloniaBarrio, ciudad, estadoProvincia, telefono, correoElectronico, documentosAdjuntos, captchaResponse } = req.body;
+  const { estado } = req.body;
+
+  // Verificar si el id es un ObjectId válido
+  if (!ObjectId.isValid(id)) {
+    return res.status(400).send('Invalid ID format');
+  }
 
   try {
     const db = getDB();
+
+    // Buscar el formulario
+    const formulario = await db.collection('formulario').findOne({ _id: new ObjectId(id) });
+
+    if (!formulario) {
+      return res.status(404).json({ msg: 'Formulario not found' });
+    }
+
+    // Si el estado es "aceptado", mover a la colección "solicitudesAprobadas"
+    if (estado === 'aceptado') {
+      // Insertar el formulario en la colección "solicitudesAprobadas"
+      await db.collection('solicitudesAprobadas').insertOne(formulario);
+    }
+
+    // Actualizar el estado del formulario en la colección "formulario"
     const result = await db.collection('formulario').updateOne(
       { _id: new ObjectId(id) },
-      { $set: { nombre, apellido, fechaNacimiento, numeroCedula, estadoCivil, coloniaBarrio, ciudad, estadoProvincia, telefono, correoElectronico, documentosAdjuntos, captchaResponse } }
+      { $set: { estadoRegistro: estado } }
     );
 
     if (result.modifiedCount === 0) {
@@ -84,6 +107,8 @@ exports.updateFormulario = async (req, res) => {
     res.status(500).send('Server Error');
   }
 };
+
+
 
 exports.deleteFormulario = async (req, res) => {
   const { id } = req.params;

@@ -1,5 +1,19 @@
 class Formulario {
-  constructor({ nombre, apellido, fechaNacimiento, numeroCedula, estadoCivil, coloniaBarrio, ciudad, estadoProvincia, telefono, correoElectronico, documentosAdjuntos, captchaResponse }) {
+  constructor({
+    nombre,
+    apellido,
+    fechaNacimiento,
+    numeroCedula,
+    estadoCivil,
+    coloniaBarrio,
+    ciudad,
+    estadoProvincia,
+    telefono,
+    correoElectronico,
+    documentosAdjuntos,
+    captchaResponse,
+    estadoRegistro = 'pendiente' // Valor por defecto "pendiente"
+  }) {
     this.nombre = nombre;
     this.apellido = apellido;
     this.fechaNacimiento = fechaNacimiento;
@@ -12,6 +26,7 @@ class Formulario {
     this.correoElectronico = correoElectronico;
     this.documentosAdjuntos = documentosAdjuntos;
     this.captchaResponse = captchaResponse;
+    this.estadoRegistro = estadoRegistro; // Campo de estado del registro
   }
 }
 
