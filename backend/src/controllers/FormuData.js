@@ -3,6 +3,8 @@ const { ObjectId } = require('mongodb');
 const Formulario = require('../documentos/formulario'); // Nota: Usar minúsculas para la extensión del archivo
 const generateFormularioExitoEmail = require('../emails/formularioExitoEmail'); // Importar la función del email
 const { sendMail } = require('../config/mailConfig'); // Importar la función para enviar correos
+const generateFormularioErrorEmail = require('../emails/formularioErrorEmail'); // Importar la función del email de error
+const generateFormularioAprobadoEmail = require('../emails/formularioAprobadoEmail'); // Importar la función del email de formulario aprobado
 
 exports.createFormulario = async (req, res) => {
   const { nombre, numeroCedula, correoElectronico } = req.body;
@@ -85,10 +87,19 @@ exports.updateFormulario = async (req, res) => {
       return res.status(404).json({ msg: 'Formulario not found' });
     }
 
-    // Si el estado es "aceptado", mover a la colección "solicitudesAprobadas"
+    // Si el estado es "aceptado", mover a la colección "solicitudesAprobadas" y enviar correo
     if (estado === 'aceptado') {
       // Insertar el formulario en la colección "solicitudesAprobadas"
       await db.collection('solicitudesAprobadas').insertOne(formulario);
+
+      // Enviar correo notificando al usuario que su formulario ha sido aprobado
+      try {
+        const emailHTML = generateFormularioAprobadoEmail(formulario.nombre, formulario.numeroCedula); // Generar el HTML del correo de aprobación
+        await sendMail(formulario.correoElectronico, 'Formulario Aprobado con Éxito', '', emailHTML); // Enviar el correo
+      } catch (err) {
+        console.error('Error al enviar el correo de aprobación:', err);
+        return res.status(500).send('Error al enviar el correo de aprobación');
+      }
     }
 
     // Actualizar el estado del formulario en la colección "formulario"
@@ -109,19 +120,36 @@ exports.updateFormulario = async (req, res) => {
 };
 
 
-
 exports.deleteFormulario = async (req, res) => {
   const { id } = req.params;
 
   try {
     const db = getDB();
+
+    // Buscar el formulario antes de eliminarlo
+    const formulario = await db.collection('formulario').findOne({ _id: new ObjectId(id) });
+
+    if (!formulario) {
+      return res.status(404).json({ msg: 'Formulario not found' });
+    }
+
+    // Eliminar el formulario
     const result = await db.collection('formulario').deleteOne({ _id: new ObjectId(id) });
 
     if (result.deletedCount === 0) {
       return res.status(404).json({ msg: 'Formulario not found' });
     }
 
-    res.json({ msg: 'Formulario deleted successfully' });
+    // Enviar correo notificando al usuario que su formulario ha sido eliminado
+    try {
+      const emailHTML = generateFormularioErrorEmail(formulario.nombre, formulario.numeroCedula); // Generar el HTML del correo de eliminación
+      await sendMail(formulario.correoElectronico, 'Formulario Eliminado', '', emailHTML); // Enviar el correo
+    } catch (err) {
+      console.error('Error al enviar el correo de eliminación:', err);
+      return res.status(500).send('Error al enviar el correo de eliminación');
+    }
+
+    res.json({ msg: 'Formulario deleted successfully and email sent' });
   } catch (err) {
     console.error(err);
     res.status(500).send('Server Error');

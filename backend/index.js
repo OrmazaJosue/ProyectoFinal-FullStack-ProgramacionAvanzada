@@ -6,6 +6,7 @@ const { conexionBDD } = require('./src/config/conexion');
 const Rutas = require('./src/routes/Rutas');
 const cargar = require('./src/routes/cargarRuta');
 const AppEnv = require('./src/config/appEnv');
+const solicitudesAprobadasRoutes = require('./src/routes/solicitudesAprobadasRoutes'); // Importar las rutas
 
 const appEnv = new AppEnv();
 
@@ -35,7 +36,7 @@ conexionBDD().then(() => {
   // Definir las rutas
   app.use('/api/formulario', Rutas);
   app.use('/api/cargar', cargar);
-
+  app.use('/api/verificar', solicitudesAprobadasRoutes); 
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
